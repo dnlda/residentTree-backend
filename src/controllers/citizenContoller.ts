@@ -3,7 +3,6 @@ import Citizen from "../models/citizenModel";
 
 export const getCitizen = async (req: Request, res: Response) => {
     try {
-        // const result = await buildCitizenTree();
         const result = await Citizen.find()
         res.json(result);
     } catch (err) {

@@ -1,6 +1,6 @@
 import mongoose, {Schema, Document} from "mongoose";
 
-interface ICitizen extends Document {
+export interface ICitizen extends Document {
     id: number;
     name: string;
     city_id: mongoose.Schema.Types.ObjectId;

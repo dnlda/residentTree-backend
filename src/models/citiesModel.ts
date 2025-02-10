@@ -1,6 +1,6 @@
 import mongoose, {Schema, Document} from "mongoose";
 
-interface ICities extends Document {
+export interface ICities extends Document {
     id: number;
     name: string;
     data: string;
