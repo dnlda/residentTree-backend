@@ -1,10 +1,15 @@
 import mongoose, {Schema, Document} from "mongoose";
 
+export interface GroupsProps {
+    type: string;
+    name: string;
+}
+
 export interface ICitizen extends Document {
     id: number;
     name: string;
     city_id: mongoose.Schema.Types.ObjectId;
-    groups: Array<{type: string; name: string}>;
+    groups: GroupsProps[]
 }
 
 const CitizenSchema: Schema = new Schema({

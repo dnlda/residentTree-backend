@@ -9,7 +9,7 @@ const app = express();
 
 app.use(cors({
   origin: clientURL,
-  methods: "GET, POST, PUT, DELETE",
+  methods: "GET, POST, PUT, PATCH, DELETE"
 }));
 app.use(express.json());
 

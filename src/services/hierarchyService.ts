@@ -46,6 +46,7 @@ export const buildHierarchy = async (): Promise<any[]> => {
 
     const cityInfo = cityDataMap.get(citizen.id);
     const citizenData = {
+        id: citizen._id,
       name: citizen.name,
       type: "citizen",
       city: cityInfo ? cityInfo.name : null,
