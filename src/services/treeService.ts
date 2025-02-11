@@ -28,7 +28,7 @@ export const buildTree = async (): Promise<any[]> => {
         };
     }
 
-    // Обработка каждого гражданина
+    // Обработка каждого жителя
     citizens.forEach((citizen) => {
         let currentLevel = root;
 
@@ -49,13 +49,13 @@ export const buildTree = async (): Promise<any[]> => {
               }, {})
             : citizen.groups || {};
 
-        // Сортируем группы в соответствии с TYPE_ORDER
+        // Сортируем группы в соответствии с sortedOrder
         const sortedGroups = Object.entries(normalizedGroups)
-            .filter(([type]) => sortedOrder.includes(type)) // Оставляем только типы из TYPE_ORDER
+            .filter(([type]) => sortedOrder.includes(type)) // Оставляем только типы из sortedOrder
             .sort((a, b) => {
                 const indexA = sortedOrder.indexOf(a[0]);
                 const indexB = sortedOrder.indexOf(b[0]);
-                return indexA - indexB; // Сортируем по индексу в TYPE_ORDER
+                return indexA - indexB; // Сортируем по индексу в sortedOrder
             });
 
         // Проходимся по отсортированным группам
@@ -86,7 +86,7 @@ export const buildTree = async (): Promise<any[]> => {
             data: cityInfo ? cityInfo.data : null,
         };
 
-        // Если текущий уровень существует, добавляем гражданина
+        // Если текущий уровень существует, добавляем жителя
         if (currentLevel) {
             currentLevel.push(citizenData);
         } else {

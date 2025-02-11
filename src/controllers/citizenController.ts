@@ -45,7 +45,7 @@ export const getTree = async (req: Request, res: Response) => {
     const hierarchy = await buildTree();
     res.json(hierarchy);
   } catch (error) {
-    console.error("Ошибка построения дерева:", error);
-    res.status(500).json({ error: "Ошибка сервера" });
+    console.error("Tree building error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
