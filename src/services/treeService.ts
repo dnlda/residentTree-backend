@@ -4,25 +4,6 @@ import City from "../models/citiesModel";
 import { ICities } from "../models/citiesModel";
 import Hierarchy, { IHierarchy } from "../models/hierarchyTypeModel";
 
-function getTypeOrder(type: string, orderArray: string[]): number {
-    return orderArray.indexOf(type);
-}
-
-function addNode(node: any[], name: string, type: string): any {
-    let currentNode = node.find(n => n.name === name && n.type === type);
-    if (!currentNode) {
-        currentNode = { name, type, children: [] };
-        node.push(currentNode);
-    }
-    return currentNode;
-}
-
-function addChildren(parent: any, children: any[]) {
-    children.forEach(child => {
-        parent.children.push(child);
-    });
-}
-
 export const buildTree = async (): Promise<any[]> => {
     const citizens: ICitizen[] = await Citizen.find();
     const cities: ICities[] = await City.find();
@@ -30,24 +11,72 @@ export const buildTree = async (): Promise<any[]> => {
     orderArr.sort((a, b) => a.order - b.order);
     const sortedOrder = orderArr.map((item) => item.type);
 
-    const cityDataMap = new Map<number, { name: string; data: any }>();
+    // Создаем Map для быстрого доступа к информации о городах
+    const cityDataMap = new Map();
     cities.forEach((city) => {
         cityDataMap.set(city.id, { name: city.name, data: city.data });
     });
 
     const root: any[] = [];
 
+    // Функция создания нового узла
+    function createNode(name: string, type: string) {
+        return {
+            name,
+            type,
+            children: [],
+        };
+    }
+
+    // Обработка каждого гражданина
     citizens.forEach((citizen) => {
         let currentLevel = root;
 
-        Object.entries(citizen.groups).forEach(([type, group]) => {
+        // Преобразуем groups из массива в объект, если необходимо
+        const normalizedGroups = Array.isArray(citizen.groups)
+            ? citizen.groups.reduce<
+                  Record<string, { name: string; type: string }>
+              >((acc, group) => {
+                  if (
+                      group &&
+                      typeof group === "object" &&
+                      "type" in group &&
+                      "name" in group
+                  ) {
+                      acc[group.type] = group as { name: string; type: string };
+                  }
+                  return acc;
+              }, {})
+            : citizen.groups || {};
+
+        // Сортируем группы в соответствии с TYPE_ORDER
+        const sortedGroups = Object.entries(normalizedGroups)
+            .filter(([type]) => sortedOrder.includes(type)) // Оставляем только типы из TYPE_ORDER
+            .sort((a, b) => {
+                const indexA = sortedOrder.indexOf(a[0]);
+                const indexB = sortedOrder.indexOf(b[0]);
+                return indexA - indexB; // Сортируем по индексу в TYPE_ORDER
+            });
+
+        // Проходимся по отсортированным группам
+        for (const [type, group] of sortedGroups) {
             if (typeof group === "object" && "name" in group) {
                 const groupName = group.name;
                 const groupType = group.type;
-                currentLevel = addNode(currentLevel, groupName, groupType).children;
-            }
-        });
 
+                // Проверяем, существует ли уже узел с таким именем и типом
+                let node = currentLevel.find(
+                    (n) => n.name === groupName && n.type === groupType
+                );
+                if (!node) {
+                    node = createNode(groupName, groupType);
+                    currentLevel.push(node); // Добавляем новый узел
+                }
+                currentLevel = node.children; // Переходим на следующий уровень
+            }
+        }
+
+        // Добавляем информацию о жителе
         const cityInfo = cityDataMap.get(citizen.id);
         const citizenData = {
             id: citizen._id,
@@ -57,15 +86,16 @@ export const buildTree = async (): Promise<any[]> => {
             data: cityInfo ? cityInfo.data : null,
         };
 
-        currentLevel.push(citizenData);
+        // Если текущий уровень существует, добавляем гражданина
+        if (currentLevel) {
+            currentLevel.push(citizenData);
+        } else {
+            console.warn(
+                `Warning: No valid hierarchy found for citizen "${citizen.name}". Adding to root.`
+            );
+            root.push(citizenData); // Если нет уровня, добавляем в корень
+        }
     });
-
-    // Сортировка корневого уровня дерева по порядку типов
-    root.sort(
-        (a, b) =>
-            getTypeOrder(a.type, sortedOrder) -
-            getTypeOrder(b.type, sortedOrder)
-    );
 
     return root;
 };
