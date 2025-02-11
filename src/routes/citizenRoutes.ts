@@ -1,11 +1,10 @@
-import express, { Request, Response } from "express";
-import { addGroupToCitizen, getCitizen } from "../controllers/citizenController";
-import { getHierarchy } from "../controllers/hierarchyController";
+import express from "express";
+import { addGroupToCitizen, getCitizen, getTree } from "../controllers/citizenController";
 
 const router = express.Router();
 
 router.get("/", getCitizen);
-router.get("/hierarchy", getHierarchy);
+router.get("/tree", getTree);
 router.patch("/:id/groups", addGroupToCitizen);
 
 

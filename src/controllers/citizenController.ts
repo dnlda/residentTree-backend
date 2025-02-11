@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Citizen from "../models/citizenModel";
+import { buildTree } from "../services/treeService";
 
 export const getCitizen = async (req: Request, res: Response) => {
     try {
@@ -13,20 +14,18 @@ export const getCitizen = async (req: Request, res: Response) => {
 
 export const addGroupToCitizen = async (req: Request, res: Response): Promise<void> => {
     try {
-        const citizenId = req.params.id; // Получаем _id из параметров запроса
-        const newGroup = req.body; // Новый объект группы из тела запроса
+        const citizenId = req.params.id;
+        const newGroup = req.body;
 
-        // Проверяем, что newGroup содержит необходимые поля
         if (!newGroup.type || !newGroup.name) {
             res.status(400).json({ message: "Type and name are required for the group" });
             return;
         }
 
-        // Находим гражданина по _id и добавляем новую группу в массив groups
         const updatedCitizen = await Citizen.findByIdAndUpdate(
             citizenId,
-            { $push: { groups: newGroup } }, // Используем $push для добавления в массив
-            { new: true } // Возвращаем обновленный документ
+            { $push: { groups: newGroup } }, 
+            { new: true }
         );
 
         if (!updatedCitizen) {
@@ -39,4 +38,14 @@ export const addGroupToCitizen = async (req: Request, res: Response): Promise<vo
         console.error("Error adding group to citizen:", err);
         res.status(500).json({ message: "Server error" });
     }
+};
+
+export const getTree = async (req: Request, res: Response) => {
+  try {
+    const hierarchy = await buildTree();
+    res.json(hierarchy);
+  } catch (error) {
+    console.error("Ошибка построения дерева:", error);
+    res.status(500).json({ error: "Ошибка сервера" });
+  }
 };

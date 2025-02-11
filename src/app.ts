@@ -4,6 +4,7 @@ import cors from "cors";
 import { clientURL, mongoURI } from "./config";
 import citizenRoutes  from "./routes/citizenRoutes";
 import citiesRouters from "./routes/citiesRoutes";
+import hierarchyRouters from "./routes/hierarchyTypeRoutes"
 
 const app = express();
 
@@ -19,5 +20,6 @@ mongoose.connect(mongoURI)
 
 app.use("/api/citizen", citizenRoutes);
 app.use("/api/cities", citiesRouters);
+app.use("/api/hierarchy", hierarchyRouters);
 
 export default app
