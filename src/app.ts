@@ -19,7 +19,7 @@ mongoose.connect(mongoURI)
   .catch(err => console.log(err));
 
 app.use("/api/citizen", citizenRoutes);
-app.use("/api/cities", citiesRouters);
+app.use("/api/city", citiesRouters);
 app.use("/api/hierarchy", hierarchyRouters);
 
 export default app

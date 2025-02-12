@@ -12,5 +12,5 @@ const CitiesSchema: Schema = new Schema({
     data: {type: String, required: true},
 })
 
-const Cities = mongoose.model<ICities>("City", CitiesSchema, "cities");
+const Cities = mongoose.model<ICities>("City", CitiesSchema, "city");
 export default Cities;
