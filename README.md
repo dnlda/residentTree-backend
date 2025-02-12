@@ -3,7 +3,7 @@
 Это бекенд часть моей реализация тестового задания на вакансию fullstack-разработчик в компанию SteadyControl
 
 ## Перед запуском 
-Cоздайте базу данных MongoDB c названием `residentTreeDB` и с URI `mongodb://localhost:27017/residentTreeD`
+Cоздайте базу данных MongoDB c названием `residentTreeDB` и с URI `mongodb://localhost:27017/residentTreeDB`
 Добавьте в  базу три коллекции `city`, `citizen`, `hierarchy` и импортируйте в них соотвествующие json
 
 ## Запуск
